@@ -19,9 +19,14 @@ RUN apt-get remove -y --autoremove ansible
 COPY ./ansible/roles/initialize_home/ /opt/ansible/roles/initialize_home/
 COPY ./ansible/initialize_root_and_skel_playbook.yaml /opt/ansible/
 
-# Here sudo is a trick to help find the ansible-playbook executable.
-# Alternatively we could have done /opt/conda/ansible-playbook ...
-RUN sudo ansible-playbook initialize_root_and_skel_playbook.yaml
+# Set up the Docker Build shell
+# Note: for whatever reason, this is not sufficient to activate the environment
+# of the user when using the "docker run" command.
+COPY ansible/roles/initialize_home/files/_activate-conda /etc/profile.d/_activate-conda.sh
+SHELL ["/bin/bash", "--login", "-c"]
+RUN ansible-playbook --version
+
+RUN ansible-playbook initialize_root_and_skel_playbook.yaml
 
 # Set up mambauser
 ENV MAMBAUSER=mambauser
@@ -33,4 +38,4 @@ USER ${MAMBAUSER}
 RUN sudo mamba install --yes tqdm
 
 # Example create a new environment as user
-RUN /opt/conda/bin/mamba create --name myenv --yes s3fs-fuse
+RUN mamba create --name myenv --yes s3fs-fuse

@@ -1,0 +1,26 @@
+- name: Copy _activate-conda commands to /usr/local/bin
+  copy:
+    src: "{{ role_path }}/files/_activate-conda"
+    dest: /usr/local/bin
+    mode: 0644  # Don't make this executable!
+
+- name: Check that a home directory has been specified
+  assert:
+    that:
+      - home_to_initialize is defined
+
+- name: "Gather info about {{ home_to_initialize }}"
+  stat:
+    path: "{{ home_to_initialize }}"
+  register: home_stat
+
+- name: "Check that {{ home_to_initialize }} is a directory"
+  assert:
+    that:
+      - home_stat.stat.isdir
+
+- name: Add .bashrc hook
+  lineinfile:
+    path: "{{ home_to_initialize }}/.bashrc"
+    line: source _activate-conda
+    create: yes

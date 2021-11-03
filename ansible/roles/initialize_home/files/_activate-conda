@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# This is not a script. At least it should not be run as a script.
+# Instead it must be sourced.
+
+# When this file is executed as a script instead of being sourced,
+# it detects this and generates a helpful error message. For more
+# info, see that error message below.
+
+# PURPOSE: These Bash commands will activate a conda environment from an
+# uninitialized bash shell.
+
+# Usage:
+
+#    source _activate-conda /path/to/prefix
+
+# or
+
+#    source _activate-conda /path/to/prefix
+
+# If the prefix is omitted, the default value is ``/opt/conda``.
+
+# Set the conda prefix to be either /opt/conda or the first argument.
+CONDA_PREFIX=${1:-/opt/conda}
+
+# Check whether or not this script is being sourced.
+# <https://stackoverflow.com/a/28776166>
+if (return 0 2>/dev/null)
+then
+  # This script is being sourced. Okay to proceed.
+
+  # There are two steps: initialization and activation.
+
+  #   1. Initialization defines a shell function to activate the current
+  #      environment.
+  #   2. Activation runs this shell function.
+
+  if [ ! -d "${CONDA_PREFIX}" ]; then
+    echo "ERROR: Prefix directory ${CONDA_PREFIX} does not exist."
+    return
+  fi
+
+  # Try conda first
+  if [ -x "${CONDA_PREFIX}/bin/conda" ]; then
+    eval "$(/opt/conda/bin/conda shell.bash hook)"
+    # Initialize mamba if it's also installed.
+    # (note: mamba depends on conda)
+    if [ -f "${CONDA_PREFIX}/etc/profile.d/mamba.sh" ]; then
+      source "${CONDA_PREFIX}/etc/profile.d/mamba.sh"
+    fi
+    conda activate
+  # If conda isn't installed, fall back to micromamba.
+  elif [ -x micromamba ]; then
+    eval "$(micromamba shell hook --shell=bash)"
+    micromamba activate "--prefix=${CONDA_PREFIX}"
+  else
+    echo "ERROR: Neither conda nor micromamba could be found."
+    return
+  fi
+else
+  # This script is not being sourced
+  echo "ERROR: This script will do nothing if executed directly, since it will run "
+  echo "in a subprocess which has no influence over your current shell. You should "
+  echo "instead source this script so that it runs in the context of your current "
+  echo "shell. This means that instead of running"
+  echo
+  echo "    $0"
+  echo
+  echo "you should run"
+  echo
+  echo "    source $0"
+  echo
+  exit 1
+fi

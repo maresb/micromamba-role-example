@@ -1,0 +1,11 @@
+- hosts: localhost
+  connection: local
+  become: true
+
+  roles:
+    - role: initialize_home
+      vars:
+        home_to_initialize: /root
+    - role: initialize_home
+      vars:
+        home_to_initialize: /etc/skel

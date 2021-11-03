@@ -1,0 +1,46 @@
+- name: Copy conda lockfile
+  copy:
+    src: "{{ role_path }}/files/environment.lock"
+    dest: /tmp/environment.lock
+    mode: 0644
+
+- name: Install system conda environment
+  include_role:
+    name: maresb.micromamba
+  vars:
+    user: root
+    # This gets passed through automatically!? <https://github.com/ansible/ansible/issues/39369>
+    # root_prefix: "{{ root_prefix }}"
+    root_prefix_condarc:
+      channels:
+        - conda-forge
+      show_channel_urls: true
+    file: /tmp/environment.lock
+  
+- name: Create symlink for conda
+  file:
+    src: "{{ root_prefix }}/bin/conda"
+    dest: /usr/local/bin/conda
+    owner: root
+    group: root
+    state: link
+
+- name: Create symlink for mamba
+  file:
+    src: "{{ root_prefix }}/bin/mamba"
+    dest: /usr/local/bin/mamba
+    owner: root
+    group: root
+    state: link
+
+- name: Make sure /etc/sudoers.d/ exists
+  file:
+    path: /etc/sudoers.d
+    state: directory
+    mode: 0755
+
+- name: Update sudo's secure_path so that sudo conda works
+  copy:
+    src: "{{ role_path }}/files/secure_path"
+    dest: /etc/sudoers.d/secure_path
+    mode: 0600

@@ -1,0 +1,16 @@
+# Use this file to generate/update environment.lock via the command:
+
+  # conda-lock \
+  #   --mamba \
+  #   --platform=linux-64 \
+  #   --file=environment.yaml \
+  #   --filename-template="environment.lock"
+
+name: base
+channels:
+  - conda-forge
+prefix: /opt/conda
+dependencies:
+  - python=3.9
+  - mamba
+  - ansible

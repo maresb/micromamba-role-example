@@ -19,8 +19,10 @@
     that:
       - home_stat.stat.isdir
 
-- name: Add .bashrc hook
+- name: Activate conda for user
   lineinfile:
     path: "{{ home_to_initialize }}/.bashrc"
     line: source _activate-conda
     create: yes
+    # We want this to run before ".bashrc" exits for non-interactive shells.
+    insertbefore: "# If not running interactively, don't do anything"

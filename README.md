@@ -2,7 +2,7 @@
 
 ## Intro
 
-Here's how I use my micromamba role to bootstrap from Ubuntu's Ansible to conda-forge's Ansible, and set up a root-owned base environment.
+Here's how I use my [micromamba role](https://github.com/maresb/ansible-micromamba-role) to bootstrap from Ubuntu's Ansible to conda-forge's Ansible, and set up a root-owned base environment.
 
 Users with sudo enabled can `sudo mamba install` into the base environment.
 

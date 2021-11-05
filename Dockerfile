@@ -39,3 +39,8 @@ RUN sudo mamba install --yes tqdm
 
 # Example create a new environment as user
 RUN mamba create --name myenv --yes s3fs-fuse
+
+CMD ["/bin/bash"]
+
+COPY entrypoint.sh /bin/entrypoint.sh
+ENTRYPOINT [ "/bin/entrypoint.sh" ]

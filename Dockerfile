@@ -19,14 +19,14 @@ RUN apt-get remove -y --autoremove ansible
 COPY ./ansible/roles/initialize_home/ /opt/ansible/roles/initialize_home/
 COPY ./ansible/initialize_root_and_skel_playbook.yaml /opt/ansible/
 
-# Set up the Docker Build shell
-# Note: for whatever reason, this is not sufficient to activate the environment
-# of the user when using the "docker run" command.
-COPY ansible/roles/initialize_home/files/_activate-conda /etc/profile.d/_activate-conda.sh
-SHELL ["/bin/bash", "--login", "-c"]
-RUN ansible-playbook --version
+# Initialize the root user and the skel (new user account) directory
+RUN /opt/conda/bin/ansible-playbook initialize_root_and_skel_playbook.yaml
 
-RUN ansible-playbook initialize_root_and_skel_playbook.yaml
+# Set up the Docker Build shell as a login shell so that the environment gets activated.
+SHELL ["/bin/bash", "--login", "-c"]
+
+# Verify that the environment is activated
+RUN ansible-playbook --version
 
 # Set up mambauser
 ENV MAMBAUSER=mambauser

@@ -19,10 +19,16 @@
     that:
       - home_stat.stat.isdir
 
-- name: Activate conda for user
+- name: Activate conda at the beginning of ~/.bashrc for non-interactive shells
   lineinfile:
     path: "{{ home_to_initialize }}/.bashrc"
-    line: source _activate-conda
+    line: "source _activate-conda  # Activate conda for non-interactive shells"
     create: yes
     # We want this to run before ".bashrc" exits for non-interactive shells.
     insertbefore: "# If not running interactively, don't do anything"
+
+- name: Activate conda again at the end of ~/.bashrc to fix the interactive prompt
+  lineinfile:
+    path: "{{ home_to_initialize }}/.bashrc"
+    line: "source _activate-conda  # Activate conda again to fix prompt"
+    create: yes

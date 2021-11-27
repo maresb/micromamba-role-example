@@ -6,7 +6,7 @@
 
 - name: Install system conda environment
   include_role:
-    name: maresb.micromamba
+    name: mambaorg.micromamba
   vars:
     user: root
     # This gets passed through automatically!? <https://github.com/ansible/ansible/issues/39369>

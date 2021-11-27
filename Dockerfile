@@ -2,7 +2,7 @@ FROM ubuntu:20.04
 
 RUN apt-get update && apt-get install -y ansible sudo nano
 
-RUN ansible-galaxy role install maresb.micromamba
+RUN ansible-galaxy role install mambaorg.micromamba
 
 # Copy the files necessary for "conda_system_install_playbook.yaml"
 COPY ./ansible/roles/conda_system_install/ /opt/ansible/roles/conda_system_install/
